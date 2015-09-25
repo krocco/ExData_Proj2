@@ -1,6 +1,7 @@
 ## Created by Peter Michael Crocco for Exploratory Data Analysis (exdata-032)
 # 25/09/2015
-## Create a plot to investigate motor vehicle related PM2.5 Emissions in Baltimore City
+## Compare Motor Vehicle Emissions in Baltimore City and Los Angeles County
+# to really compare these two, they should be placed on the same graph
 
 # !!ASSUMPTION!!
 ###   Motor Vehicles refers to any term containing "vehicle" in SCC.Level.Two category
@@ -32,12 +33,13 @@ scc.vehicles <- filter(scc, grepl("vehicle", ignore.case=TRUE, SCC.Level.Two))
 
 result <- 
         nei %>%
-        group_by(year) %>%
+        group_by(year, fips) %>%
         filter(SCC  %in% scc.vehicles$SCC) %>%
-        filter(fips == "24510") %>%
-        summarize(motorVehicleEmmisions = sum(Emissions))
+        filter(fips == "24510"|fips=="06037") %>%
+        summarize(VehicleEmissions = sum(Emissions))
+
 
 # plot a chart with 4 data points, fit a linear regression
-qplot(year, motorVehicleEmmisions, data = result, geom = c("point","smooth"),
-      method = "lm", main = "Baltimore City Motor Vehicle Emissions")
-ggsave(file = "plot5.png", width=3, height=3, dpi=200)
+qplot(year, VehicleEmissions, data = result, color = fips, 
+      geom = c("point", "smooth"), method = "lm")
+ggsave(file = "plot6.png", width=3, height=3, dpi=200)
